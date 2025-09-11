@@ -172,6 +172,4 @@ find / -perm -u=s -type f 2>/dev/null
 
 2>/dev/null kontrol etmeye yetkimiz olmayan dosyalar hata verdirecektir. Hata mesajlarını (2>) çöpe(/dev/null) atar 
 
-Ve artık tüm yollarla root olmanın mutluluğu ile odayı bitiriyoruz. 
-
-
+Ve artık root olunabilecek tüm yollarla root olmanın verdiği üstünlük hissi ile odayı bitiriyoruz. 
