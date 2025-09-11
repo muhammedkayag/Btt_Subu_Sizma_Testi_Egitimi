@@ -75,7 +75,7 @@ Ardından plugins sayfasında akismet pluginini activate edince içerdeyiz:
 
 ![Resim5](pics/c7.png)
 
-Yetki yükseltme adımını otomatikleştirmek için linux yetki yükseltme aracı olan linpeas i pentest makinemize yükliyoruz: 
+Yetki yükseltme adımını otomatikleştirmek için linux yetki yükseltme aracı olan linpeas i pentest makinemize yüklüyoruz: 
 
 ```bash
 curl -L https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh
