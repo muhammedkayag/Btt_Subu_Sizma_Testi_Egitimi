@@ -11,7 +11,7 @@ Kurulum sırasında herhangi bir ayarı değiştirmeden Next → Next → Finish
 
 ## 2. Parrot Security OS (Pentest Makinesi)
 
-Parrot, saldırı makinesi olarak kullanılacaktır.  
+Parrot, saldırı makinesi olarak kullanılabilir. Eğitim sırasında sızma makinesi olarak debian kullanılacaktır . Katılımcılar Kali Linux, Blackarch veya herhangi bir linux dağıtımını kullanabilir. Gerekli araçlar yüklü ise kullanılacak komutlar tamamen aynı olacaktır. 
 
 ### İndirme:
 [Parrot Security 6.4 OVA](https://deb.parrot.sh/parrot/iso/6.4/Parrot-security-6.4_amd64.ova)
