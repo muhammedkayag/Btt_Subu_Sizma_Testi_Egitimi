@@ -1,7 +1,7 @@
 # TRYHACKME BTTSubuCTF WRITEUP
 
 ## Makineye Erişim 
-Makineye https://tryhackme.com/jr/bttsubuctf (suan offline yükleme durumunda ilerde aktif olacak) adresinden erisebilirsiniz.  
+Makineye https://tryhackme.com/jr/bttsubuctf adresinden erisebilirsiniz.  
 
 ## Çözüm Adımları 
 Öncelikle makineye erişmek için openvpn ile TryHackMe'nin ağına bağlanıyoruz: 
