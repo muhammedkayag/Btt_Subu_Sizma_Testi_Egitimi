@@ -1,1 +1,3 @@
 test
+
+wget http://ports.ubuntu.com/ubuntu-ports/pool/universe/x/xgraph/xgraph_12.1-17_arm64.deb
