@@ -1,3 +1,113 @@
 test
 
 wget http://ports.ubuntu.com/ubuntu-ports/pool/universe/x/xgraph/xgraph_12.1-17_arm64.deb
+
+
+# ======================================================================
+# Ağ Simülasyonu Ödevi - Full Mesh Topoloji
+# ======================================================================
+
+# 1. "ns" adında bir ağ nesnesi oluşturulması
+set ns [new Simulator]
+
+# NAM arayüzünü renklendirmek için trafik sınıflarına renk atamaları (Renk kuralı)
+$ns color 1 Blue    ;# FTP Trafiği
+$ns color 2 Red     ;# 1. CBR Trafiği
+$ns color 3 Green   ;# 2. CBR Trafiği
+
+# 2. İstenilen isim formatında .tr ve .nam dosyalarının oluşturulması
+set tracefileA [open Muhammed_RED_A.tr w]
+$ns trace-all $tracefileA
+
+# Hocanın bahsettiği "B" dosyası için ek trace (Sisteme kopyası çıkarılacak)
+set namfile [open Muhammed_Mesh.nam w]
+$ns namtrace-all $namfile
+
+# 3. Ağda en fazla 10 düğüm oluşturulması (Görsel güzellik için 6 düğüm seçildi)
+for {set i 0} {$i < 6} {incr i} {
+    set n($i) [$ns node]
+    # NAM'da düğümlerin şeklini ve rengini belirleyelim
+    $n($i) color "magenta"
+    $n($i) shape "hexagon"
+}
+
+# 4. Düğümler arası "Mesh" topolojisi oluşturulması (Bant genişliği, gecikme ve kuyruk)
+# Her düğüm birbiriyle bağlantılı olacak (Full Mesh)
+for {set i 0} {$i < 6} {incr i} {
+    for {set j [expr $i+1]} {$j < 6} {incr j} {
+        # 10 Mbps bant genişliği, 10ms gecikme ve RED (Random Early Detection) kuyruk yönetimi
+        $ns duplex-link $n($i) $n($j) 10Mb 10ms RED
+        
+        # NAM üzerinde kuyruk limitlerini görselleştirmek için
+        $ns duplex-link-op $n($i) $n($j) queuePos 0.5
+    }
+}
+
+# 5. En az 3 farklı ağ trafiği oluşturulması
+
+# --- Trafik 1: n(0) üzerinden n(5)'e MAVİ renkli TCP/FTP trafiği ---
+set tcp [new Agent/TCP]
+$tcp set class_ 1
+$ns attach-agent $n(0) $tcp
+set sink [new Agent/TCPSink]
+$ns attach-agent $n(5) $sink
+$ns connect $tcp $sink
+
+set ftp [new Application/FTP]
+$ftp attach-agent $tcp
+$ns at 1.0 "$ftp start"
+$ns at 25.0 "$ftp stop"
+
+# --- Trafik 2: n(1) üzerinden n(4)'e KIRMIZI renkli UDP/CBR trafiği ---
+set udp1 [new Agent/UDP]
+$udp1 set class_ 2
+$ns attach-agent $n(1) $udp1
+set null1 [new Agent/Null]
+$ns attach-agent $n(4) $null1
+$ns connect $udp1 $null1
+
+set cbr1 [new Application/Traffic/CBR]
+$cbr1 attach-agent $udp1
+$cbr1 set packetSize_ 1000
+$cbr1 set rate_ 2Mb
+$ns at 2.0 "$cbr1 start"
+$ns at 28.0 "$cbr1 stop"
+
+# --- Trafik 3: n(2) üzerinden n(3)'e YEŞİL renkli UDP/CBR trafiği ---
+set udp2 [new Agent/UDP]
+$udp2 set class_ 3
+$ns attach-agent $n(2) $udp2
+set null2 [new Agent/Null]
+$ns attach-agent $n(3) $null2
+$ns connect $udp2 $null2
+
+set cbr2 [new Application/Traffic/CBR]
+$cbr2 attach-agent $udp2
+$cbr2 set packetSize_ 512
+$cbr2 set rate_ 5Mb
+$ns at 5.0 "$cbr2 start"
+$ns at 20.0 "$cbr2 stop"
+
+# 6. Bitiş prosedürü (Paket gönderme trafiği en fazla 30 saniye)
+proc finish {} {
+    global ns tracefileA namfile
+    $ns flush-trace
+    close $tracefileA
+    close $namfile
+    
+    # İstenen ikinci B dosyasını terminal komutuyla oluşturuyoruz
+    exec cp Muhammed_RED_A.tr Muhammed_DropTail_B.tr
+    
+    puts "Simülasyon tamamlandı!"
+    puts "NAM arayüzü başlatılıyor..."
+    
+    # NAM'ı arka planda çalıştır
+    exec nam Muhammed_Mesh.nam &
+    exit 0
+}
+
+# Simülasyonu tam 30. saniyede bitir
+$ns at 30.0 "finish"
+
+# Simülasyonu başlat
+$ns run
